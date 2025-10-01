@@ -58,19 +58,25 @@ fn main() {
     shader.set_shader_value(resolution_location, resolution);
 
     let mut i = 0;
+    let mut isplaying = false;
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
-        let tx = state[i].texture().clone();
-        let mut t = d.begin_texture_mode(&thread, &mut state[1- i]);
-        t.clear_background(Color::WHITE);
-        let mut s = t.begin_shader_mode(&shader);
-        s.draw_texture(tx, 0, 0, Color::WHITE);
-        drop(s);
-        drop(t);
+        if isplaying {
+            let tx = state[i].texture().clone();
+            let mut t = d.begin_texture_mode(&thread, &mut state[1- i]);
+            t.clear_background(Color::WHITE);
+            let mut s = t.begin_shader_mode(&shader);
+            s.draw_texture(tx, 0, 0, Color::WHITE);
+            drop(s);
+            drop(t);
 
-        i = 1 - i;
-        d.clear_background(Color::BLACK);
-        d.draw_texture_ex(state[i].texture(), raylib::math::Vector2::new(0.0, 0.0), 0.0, 1.0/scalar, Color::WHITE);
-        drop(d);
+            i = 1 - i;
+            d.clear_background(Color::BLACK);
+            d.draw_texture_ex(state[i].texture(), raylib::math::Vector2::new(0.0, 0.0), 0.0, 1.0/scalar, Color::WHITE);
+        }
+
+        if d.is_key_pressed(raylib::consts::KeyboardKey::KEY_SPACE) {
+            isplaying = !isplaying;
+        }
     }
 }
